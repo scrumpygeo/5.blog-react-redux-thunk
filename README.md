@@ -25,11 +25,41 @@ Setup:
         import { combineReducers } from 'redux';
 
         export default combineReducers({
-        replaceThis: () => 'Hello'
+            replaceThis: () => 'Hello'
         });
 
 
 ```
 
 4. create components/PostList.js as a class based component.
+
    - import it into App
+
+5. Create action creator file: src/action/index.js
+   - we will call our action creator for fetching posts, fethPosts:
+
+```
+            export const fetchPosts = () => {
+                return {
+                    type: 'FETCH_POSTS'
+                };
+            };
+
+```
+
+6. wire up the action creator to our PostList component:
+   - import {connect} from react-redux
+   - also import our fetchPosts action creator from actions folder.
+   - at export default, we can call the connect() function. As we don't yet have mapStateToPRops we pass it null.
+   - pass in our action creator as 2nd arg to connect
+   - create componentDidMount to call this.props.fetchPosts(), the action creator
+
+```
+        export default connect(null, { fetchPosts })(PostList);
+
+        (above fetchPosts being shortened with ES2015 from
+        {fetchPosts: fetchPosts})
+```
+
+7. preconfigure axios with src/apis/jsonPlaceholder.js and endpoint baseURL: 'https://jsonplaceholder.typicode.com'
+   - import this into actions/index.js so it's accessible to action creators.
