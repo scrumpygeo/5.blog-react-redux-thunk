@@ -83,3 +83,23 @@ Setup:
         dispatch({ type: 'FETCH_POSTS', payload: response.data });
     };
 ```
+
+10. Now focus on reducers: a separate file for each reducer. Create reducers/postsReducer.js
+    with a stub:
+
+```
+            export default () => {
+            return 123;
+            };
+
+```
+
+- import file into reducers/index.js
+- connect it to combineReducers with key of posts:
+
+```
+         export default combineReducers({
+         posts: postsReducer
+         });
+
+```
