@@ -62,4 +62,24 @@ Setup:
 ```
 
 7. preconfigure axios with src/apis/jsonPlaceholder.js and endpoint baseURL: 'https://jsonplaceholder.typicode.com'
+
    - import this into actions/index.js so it's accessible to action creators.
+
+8. in index.js import thunk from 'redux-thunk' and applyMiddleware from redux
+
+   - wire up redux thunk by modifying Provider store prop assignment by creating store variable separately:
+   - const store = createStore(reducers, applyMiddleware(thunk));
+   - in Provider, stote={store} , ie assign to store prop.
+
+9. Change action creator to reflect use of thunk middlware.
+   - define a function, fetchPosts, that returns a function:
+
+```
+    import jsonPlaceholder from '../apis/jsonPlaceholder';
+
+    export const fetchPosts = () => async dispatch => {
+        const response = await jsonPlaceholder.get('/posts');
+
+        dispatch({ type: 'FETCH_POSTS', payload: response.data });
+    };
+```
