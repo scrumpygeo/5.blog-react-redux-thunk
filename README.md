@@ -103,3 +103,33 @@ Setup:
          });
 
 ```
+
+- the postsReducer is there to maintain a list of posts form the api.
+- as this state is in the form of an array, make sure state has default of empty array so that there is no undefined value the very first time it is called.
+- check for action type and return payload if appropriate.
+
+```
+            export default (state = [], action) => {
+            switch (action.type) {
+               case 'FETCH_POSTS':
+                  return action.payload;
+               default:
+                  return state;
+            }
+            };
+```
+
+11. Now we've defined the reducer, we go to the PostList component to get the list of posts in it.
+
+- this needs mapStateToProps function, which takes state from redux store and is passed into connect
+- state will have property called posts because in reducer index we defined posts: postsReducer, so posts holds all the data the reducer has returned.
+
+```
+   PostList tail end:
+
+         const mapStateToProps = state => {
+         return { posts: state.posts };
+         };
+
+         export default connect(mapStateToProps, { fetchPosts })(PostList);
+```
