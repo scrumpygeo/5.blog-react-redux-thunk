@@ -10,7 +10,11 @@ class PostList extends Component {
   renderList = () => {
     return this.props.posts.map(post => {
       return (
-        <div className='list-group-item ' key={post.id}>
+        <div
+          className='list-group-item '
+          key={post.id}
+          style={{ backgroundColor: 'rgb(250, 250, 250)' }}
+        >
           <div className='d-flex align-items-center'>
             <i className='fas fa-user-alt item'></i>
 

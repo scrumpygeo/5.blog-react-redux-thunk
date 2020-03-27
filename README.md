@@ -134,4 +134,13 @@ Setup:
          export default connect(mapStateToProps, { fetchPosts })(PostList);
 ```
 
-12. PostList: write helper function outside render method to handle logic and create JSX.
+12. PostList: write helper function outside render method to handle logic and create JSX. This includes some css styling.
+
+13. Get blog post author via second request to API at /users endpoint.
+
+    - create action creator fetchUser
+    - this makes api request to /users/{id}
+    - it then dispatches an action of type 'FETCH_USER' with data in payload.
+    - we also create a usersReducer which will hold a list of all users we have fetched.
+
+i. create action creator in actions/index called fetchUser(id) that takes in id of user we will fetch
