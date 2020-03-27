@@ -203,3 +203,55 @@ v. UserHeader now needs access to redux level state, which requires mapStateToPr
 
       export default connect(mapStateToProps, { fetchUser })(UserHeader);
 ```
+
+14. Refactor UserHeader.
+
+- component is passed a collection of props - the entire list of users - when it's purpose is to show just 1 user. Ideally we want to pass it just 1 user. With mapStateToProps you can also do pre-calculations on values coming into props.
+- relocate the logic in render finding our user into mapState to props. This increases reusability (in fact some engineers relocate mapStateToProps and connect function to a separate file )
+- problem is that prop is only available inside the component, not outside where mapStateToProps is.
+- However mapStateToProps is also called with a 2nd argument, ownProps, which is a reference to the props that are about to be passed to the component. So we can reference it for precalculation steps.
+
+before:
+
+```
+         render() {
+            const user = this.props.users.find(user => user.id === this.props.userId);
+            if (!user) {
+               return null;
+            }
+            return <div><em>{user.name}</em></div>;
+            }
+         }
+
+
+         const mapStateToProps = state => {
+         return { users: state.users };
+         };
+
+```
+
+after:
+
+```
+
+               render() {
+                  const { user } = this.props;    <---NB  props only contains user (singular)
+
+                  if (!user) {
+                     return null;
+                  }
+                  return (
+                     <div>
+                        <em>{user.name}</em>
+                     </div>
+                  );
+                 }
+               }
+
+   Modify props before entry into UserHeader component via ownProps:
+
+            const mapStateToProps = (state, ownProps) => {
+            return { user: state.users.find(user => user.id === ownProps.userId) };
+            };
+
+```
