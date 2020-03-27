@@ -144,3 +144,62 @@ Setup:
     - we also create a usersReducer which will hold a list of all users we have fetched.
 
 i. create action creator in actions/index called fetchUser(id) that takes in id of user we will fetch
+
+ii. create UserHeader class-based component to hold user name and import into PostList component with props: `<UserHeader userId={post.userId} />`
+
+iii. in UserHeader ensure we call action creator to fetch correct user.
+= import connect function & action creator (fetchUser) and use connect function to wire it up.
+
+- as we don't yet have mapStateToProps, wire connect up this way:
+  `export default connect(null, { fetchUser })(UserHeader);`
+
+- to make sure we fetch the correct user every time component renders, add componentDidMount to call action creator:
+
+```
+         componentDidMount() {
+            this.props.fetchUser(this.props.userId);
+         }
+```
+
+iv. create the reducer to catch the above action: usersReducer:
+
+```
+         export default (state = [], action) => {
+            switch (action.type) {
+               case 'FETCH_USER':
+                  return [...state, action.payload];
+               default:
+                  return state;
+            }
+         };
+
+   and in reducers/index.js:
+
+         export default combineReducers({
+            posts: postsReducer,
+            users: usersReducer
+         });
+
+
+```
+
+v. UserHeader now needs access to redux level state, which requires mapStateToProps:
+
+```
+         const mapStateToProps = state => {
+         return { users: state.users };
+         };
+
+   - this gives us access to all users in our list, so we have to loop thru and find the one we want in render() with:
+
+       const user = this.props.users.find(user => user.id === this.props.userId);
+
+   NB first time component renders to screen array will be empty, however the user we are interested in won't be available anyway. So after above add:
+            if (!user) {
+               return null;
+            }
+
+   And make sure mapStateToProps is called in connect:
+
+      export default connect(mapStateToProps, { fetchUser })(UserHeader);
+```
