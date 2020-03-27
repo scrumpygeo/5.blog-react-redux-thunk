@@ -133,3 +133,5 @@ Setup:
 
          export default connect(mapStateToProps, { fetchPosts })(PostList);
 ```
+
+12. PostList: write helper function outside render method to handle logic and create JSX.
