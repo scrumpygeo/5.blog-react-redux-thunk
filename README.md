@@ -255,3 +255,54 @@ after:
             };
 
 ```
+
+15. Application currenly works but makes too many repeat requests for same user.
+
+- one way to resolve this involves memoization, a function from lodash (npm i --save lodash)
+- the other way I prefer still uses lodash but involves action creators within action creators:
+
+  - create fetchPostsAndActionCreators action creatore which does all this:
+    - calls fetchPosts
+    - gets list of posts
+    - finds unique userIds from the posts using uniq method from lodash
+    - iterates over unique ids
+    - calls fetchUser with each userId.
+    - all our components will now call only fetchPostsAndUsers directly, not the other 2.
+    - since fetchPostsAndUsers calls the other 2, it must dispatch the result via thunk with the dispatch method.
+    - ie when u call an action creator from another action creator u must ensure u dispatch the result of calling the action creator. eg dispatch(fetchPosts())
+
+  i. in actions/index, create fetchPostsAndUsers action creator
+  ii. within it call fetchPosts and dispatch it to thunk: dispatch(fetchPosts())
+  iii. get list of posts. So u must wait till dispatch(fetchPosts()) has completed.
+  So prefix with await, ie `await dispatch(fetchPosts())`
+
+  iv. connect up the new action creator with PostList like so:
+
+      * import fetchPostsAndUsers into PostList component.
+      * in componentDidMount replace call to fetchPosts with this.props.fetchPostsAndUsers();
+      * at bottom hook up action creator to connect function: `export default connect(mapStateToProps, { fetchPostsAndUsers })(PostList);`
+
+  v. give fetchPostsAndUsers access to state via getState parameter. So now we have access to all the posts in state via getState().posts. We can iterate thru this to look for unique ids.
+
+  - this uses lodash library so `import _ from 'lodash';`
+  - we use lodash's version of the map function :
+  - this maps thru all the posts and pulls off the id property: `_.map(getState().posts, 'userId')` - gives us an array of all user ids.
+  - to get unique user ids, use lodash uniqu method: `_.uniq(_.map(getState().posts, 'userid'))`
+  - we now have an array with unique user ids.
+
+  vi. iterate thru our list of unique ids and for each one call our fetchUser action creator and dispatch the result of it. We don't need an await this time because we don't care about waiting for each user to be fetched. There is no other logic to do after we fetch those users.
+  (also the async await syntax doesn't work with the forEach statement)
+
+```
+   fetchPostsAndUsers:
+
+      export const fetchPostsAndUsers = () => async (dispatch, getState) => {
+      await dispatch(fetchPosts());
+      const userIds = _.uniq(_.map(getState().posts, 'userId'));
+      userIds.forEach(id => dispatch(fetchUser(id)));
+      };
+
+
+```
+
+vii. In UserHeader, the componentDidMount is still there, calling fetchUser to get its own data so remove componentDidMount completely. We can also remove fetchUser references from this file, being the import and in the connect statement at bottom
