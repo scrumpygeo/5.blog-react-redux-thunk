@@ -1,6 +1,7 @@
 ## React Redux Thunk Blog using jsonPlaceholder API
 
-App grabs blog data from API then makes a 2nd request to grab user data relating to the blog while minimizing number of requests.
+This app demonstrates the basic use of React Redux with Redux-Thunk to access an API.
+It grabs dummy blog data from API to store a list of posts then makes a 2nd request to grab user data relating to each blog post while minimizing number of API requests.
 
 Setup:
 
@@ -306,3 +307,5 @@ after:
 ```
 
 vii. In UserHeader, the componentDidMount is still there, calling fetchUser to get its own data so remove componentDidMount completely. We can also remove fetchUser references from this file, being the import and in the connect statement at bottom
+
+Number of API requests can be checked in chrome tools looking at network data with xhr tag selected.
